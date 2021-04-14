@@ -1,0 +1,14 @@
+repos:
+  - repo: https://github.com/psf/black
+    rev: HEAD # Replace by any tag/version: https://github.com/psf/black/tags
+    hooks:
+      - id: black
+        language_version: python3 # Should be a command that runs python3.6+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v3.4.0
+    hooks:
+    -   id: check-yaml
+    -   id: check-toml
+    -   id: debug-statements
+    -   id: check-case-conflict
+    -   id: end-of-file-fixer
