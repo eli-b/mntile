@@ -137,7 +137,9 @@ class TilePuzzle:
                 state_hash * 1.0 / 2 ** sys.hash_info.width + 0.5
             )  # +0.5 because half the hashes are negative integers
             if random_from_hash < self.error_rate:
-                min_dist += round(random_from_hash * (self.error_upper - self.error_lower)) + self.error_lower
+                min_dist += (
+                    round(random_from_hash / self.error_rate * (self.error_upper - self.error_lower)) + self.error_lower
+                )
                 if min_dist < 0:
                     min_dist = 0
 
