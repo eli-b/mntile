@@ -85,7 +85,7 @@ class AStar:
 
             if nodes_out is not None:
                 nodes_out.write(
-                    f"{hash(node)}: {{f: {node.f}, h: {node.h}, g: {node.h}, "
+                    f"{hash(node)}: {{f: {node.f}, h: {node.h}, g: {node.g}, "
                     f"state: {list(node.state.puzzle)}, parent: {hash(node.parent)}}}\n"
                 )
 
