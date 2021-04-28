@@ -178,6 +178,8 @@ if __name__ == "__main__":
     )
     parser.add_argument("--nodes-dir", type=str, default="nodes", help="The directory to store nodes files in")
     parser.add_argument("--timeout", type=float, default=300, help="Timeout per puzzle, in seconds")
+    parser.add_argument("--first", type=int, default=0, help="Index of the first puzzle to solve")
+    parser.add_argument("--last", type=int, default=-1, help="Index of the last puzzle to solve")
     parser.add_argument("--error-rate", type=float, default=0, help="Error rate of the heuristic")
     parser.add_argument("--error-lower-bound", type=float, default=0, help="Error lower bound")
     parser.add_argument("--error-upper-bound", type=float, default=0, help="Error upper bound")
@@ -203,6 +205,10 @@ if __name__ == "__main__":
     with open(args.input_path) as f:
         start_states = TilePuzzle.read(f)
     for i, start_state in enumerate(start_states):
+        if i < args.first:
+            continue
+        if 0 <= args.last < i:
+            break
         print(f"Solving instance {i}: ", end="", flush=True)
         with open(f"{args.nodes_dir}/{pathlib.Path(args.input_path).name}_{i}", "w") as nodes:
             try:
