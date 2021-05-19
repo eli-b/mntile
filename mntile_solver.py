@@ -1,6 +1,6 @@
 import heapq
 from dataclasses import dataclass, field
-from typing import Tuple, List, TextIO
+from typing import List, TextIO
 import time
 
 from mntile import TilePuzzleState, TilePuzzle, SlideDirection, TileWeight
@@ -70,11 +70,11 @@ class AStar:
         closed = {root.state: root}
         open_ = [root]
 
+        first_node_written = False
         nodes_out.write("{\n")
 
         while open_:
             if time.time() - start_time > timeout:
-                nodes_out.seek(-2, os.SEEK_CUR)  # Delete the last comma
                 nodes_out.write("}")
                 self.total_time = time.time() - start_time
                 raise Timeout(f"Timed out after {self.total_time} seconds.")
@@ -85,13 +85,15 @@ class AStar:
             self.cost_lower_bound = node.f
 
             if nodes_out is not None:
+                if first_node_written:
+                    nodes_out.write(",\n")
+                first_node_written = True
                 nodes_out.write(
                     f'"{hash(node)}": {{"f": {node.f}, "h": {node.h}, "g": {node.g}, '
-                    f'"state": {list(node.state.puzzle)}, "parent": {hash(node.parent)}}},\n'
+                    f'"state": {list(node.state.puzzle)}, "parent": {hash(node.parent)}}}'
                 )
 
             if self._tile_puzzle.goal_test(node.state):
-                nodes_out.seek(-2, os.SEEK_CUR)  # Delete the last comma
                 nodes_out.write("}")
                 self.total_time = time.time() - start_time
                 self.cost = node.g
@@ -150,7 +152,6 @@ class AStar:
                     heapq.heappush(open_, new_node)
                     self.generated += 1
 
-        nodes_out.seek(-2, os.SEEK_CUR)  # Delete the last comma
         nodes_out.write("}")
         self.total_time = time.time() - start_time
         raise NoSolution(f"No solution. Elapsed time: {self.total_time} seconds.")
