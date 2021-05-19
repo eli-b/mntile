@@ -179,10 +179,11 @@ if __name__ == "__main__":
     parser.add_argument(
         "input_path",
         metavar="INPUT_PATH",
+        type=pathlib.Path,
         help="Input problem instances file path. "
         "File name must start with MxN where M and N are the dimensions of the puzzle.",
     )
-    parser.add_argument("--nodes-dir", type=str, default="nodes", help="The directory to store nodes files in")
+    parser.add_argument("--nodes-dir", type=pathlib.Path, default="nodes", help="The directory to store nodes files in")
     parser.add_argument("--timeout", type=float, default=300, help="Timeout per puzzle, in seconds")
     parser.add_argument("--first", type=int, default=0, help="Index of the first puzzle to solve")
     parser.add_argument("--last", type=int, default=-1, help="Index of the last puzzle to solve")
@@ -194,7 +195,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     try:
-        height, width = re.match(r"(?:.*/)?(\d+)x(\d+)", args.input_path).groups()
+        height, width = re.match(r"(\d+)x(\d+)", args.input_path.name).groups()
     except Exception as e:
         raise Exception("Input file name not of correct format (MxN_###)") from e
     TilePuzzleState._width = TilePuzzle._width = int(height)
@@ -216,7 +217,7 @@ if __name__ == "__main__":
         if 0 <= args.last < i:
             break
         print(f"Solving instance {i}: ", end="", flush=True)
-        with open(f"{args.nodes_dir}/{pathlib.Path(args.input_path).name}_{i}", "w") as nodes:
+        with open(f"{args.nodes_dir / args.input_path.name}_{i}", "w") as nodes:
             try:
                 solution = a_star.solve(start_state, nodes_out=nodes, timeout=args.timeout)
                 print(
