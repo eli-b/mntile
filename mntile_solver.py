@@ -74,6 +74,7 @@ class AStar:
 
         while open_:
             if time.time() - start_time > timeout:
+                nodes_out.seek(-2, os.SEEK_CUR)  # Delete the last comma
                 nodes_out.write("}")
                 self.total_time = time.time() - start_time
                 raise Timeout(f"Timed out after {self.total_time} seconds.")
@@ -85,11 +86,12 @@ class AStar:
 
             if nodes_out is not None:
                 nodes_out.write(
-                    f"{hash(node)}: {{f: {node.f}, h: {node.h}, g: {node.g}, "
-                    f"state: {list(node.state.puzzle)}, parent: {hash(node.parent)}}}\n"
+                    f'"{hash(node)}": {{"f": {node.f}, "h": {node.h}, "g": {node.g}, '
+                    f'"state": {list(node.state.puzzle)}, "parent": {hash(node.parent)}}},\n'
                 )
 
             if self._tile_puzzle.goal_test(node.state):
+                nodes_out.seek(-2, os.SEEK_CUR)  # Delete the last comma
                 nodes_out.write("}")
                 self.total_time = time.time() - start_time
                 self.cost = node.g
@@ -148,6 +150,7 @@ class AStar:
                     heapq.heappush(open_, new_node)
                     self.generated += 1
 
+        nodes_out.seek(-2, os.SEEK_CUR)  # Delete the last comma
         nodes_out.write("}")
         self.total_time = time.time() - start_time
         raise NoSolution(f"No solution. Elapsed time: {self.total_time} seconds.")
