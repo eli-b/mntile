@@ -170,9 +170,11 @@ if __name__ == "__main__":
     import re
     import argparse
 
-    parser = argparse.ArgumentParser(description="Sliding Tile Puzzle Solver", prog="mntile_solver")
-    # parser.add_argument('input', metavar='INPUT_PATH', type=open, default=sys.stdin,
-    #                    help='Input problem instances file path. If not provided, will read lines from stdin.')
+    parser = argparse.ArgumentParser(
+        description="Sliding Tile Puzzle Solver",
+        prog="mntile_solver",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    )
     parser.add_argument(
         "input_path",
         metavar="INPUT_PATH",
