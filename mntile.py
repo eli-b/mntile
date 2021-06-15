@@ -137,9 +137,9 @@ class TilePuzzle:
                 state_hash * 1.0 / 2 ** sys.hash_info.width + 0.5
             )  # +0.5 because half the hashes are negative integers
             if random_from_hash < self.error_rate:
-                min_dist += (
-                    round(random_from_hash / self.error_rate * (self.error_upper - self.error_lower)) + self.error_lower
-                )
+                second_random_from_hash = random_from_hash / self.error_rate  # 0 <= random_from_hash < error_rate so
+                # 0 <= second_random_from_hash < 1
+                min_dist += round(second_random_from_hash * (self.error_upper - self.error_lower)) + self.error_lower
                 if min_dist < 0:
                     min_dist = 0
 
@@ -149,7 +149,6 @@ class TilePuzzle:
         return self._goal == state
 
     def get_successors_and_op_cost(self, state: TilePuzzleState) -> List[Tuple[TilePuzzleState, int]]:
-        """"""
         neighbors_and_op_costs = []
         if self.weight == TileWeight.unit_weight:
             for op in self.applicable_operators[state.blank]:
