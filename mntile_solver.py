@@ -73,12 +73,14 @@ class AStar:
         open_ = [root]
 
         first_node_written = False
-        nodes_out.write("{\n")
+        if nodes_out is not None:
+            nodes_out.write("{\n")
 
         while open_:
             if time.time() - start_time > timeout:
-                nodes_out.write("}")
                 self.total_time = time.time() - start_time
+                if nodes_out is not None:
+                    nodes_out.write("}")
                 raise Timeout(f"Timed out after {self.total_time} seconds.")
 
             node = heapq.heappop(open_)
@@ -96,8 +98,9 @@ class AStar:
                 )
 
             if self._tile_puzzle.goal_test(node.state):
-                nodes_out.write("}")
                 self.total_time = time.time() - start_time
+                if nodes_out is not None:
+                    nodes_out.write("}")
                 self.cost = node.g
                 return self.retrace(node), self.cost, self.total_time
 
@@ -154,8 +157,9 @@ class AStar:
                     heapq.heappush(open_, new_node)
                     self.generated += 1
 
-        nodes_out.write("}")
         self.total_time = time.time() - start_time
+        if nodes_out is not None:
+            nodes_out.write("}")
         raise NoSolution(f"No solution. Elapsed time: {self.total_time} seconds.")
 
     def retrace(self, node: AStarNode) -> List[SlideDirection]:
