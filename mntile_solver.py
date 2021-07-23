@@ -1,6 +1,6 @@
 import heapq
 from dataclasses import dataclass, field
-from typing import List, TextIO
+from typing import List, TextIO, Tuple
 import time
 
 from mntile import TilePuzzleState, TilePuzzle, SlideDirection, TileWeight
@@ -58,8 +58,10 @@ class AStar:
         self.cost_lower_bound = 0
         self.total_time = None
 
-    def solve(self, state: TilePuzzleState, nodes_out: TextIO = None, timeout=60) -> List[SlideDirection]:
-        """Returns the actions to reach the goal from the given state.
+    def solve(
+        self, state: TilePuzzleState, nodes_out: TextIO = None, timeout=60
+    ) -> Tuple[List[SlideDirection], float, float]:
+        """Returns the actions to reach the goal from the given state, their combined cost, and the total time.
         Their combined cost is guaranteed to be optimal as long as
         the heuristic is admissible."""
         self._reset_stats()
@@ -156,7 +158,7 @@ class AStar:
         self.total_time = time.time() - start_time
         raise NoSolution(f"No solution. Elapsed time: {self.total_time} seconds.")
 
-    def retrace(self, node: AStarNode):
+    def retrace(self, node: AStarNode) -> List[SlideDirection]:
         reverse_order_actions = []
 
         while node.parent is not None:
