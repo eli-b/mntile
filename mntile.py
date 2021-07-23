@@ -9,7 +9,7 @@ class TilePuzzleState:
     """Represents the state of an MxN tile puzzle."""
 
     puzzle: Tuple[int]  # An MxN-sized list
-    blank: int = field(default=0, hash=False, compare=False)
+    blank: int = field(default=-1, hash=False, compare=False)
 
     @property  # Not a classmethod property because, sadly, pypy doesn't support classmethod properties yet
     # (at least not on dataclasses)
@@ -25,6 +25,10 @@ class TilePuzzleState:
     # (at least not on dataclasses)
     def size(self):
         return self.__class__._width * self.__class__._height
+
+    def __post_init__(self):
+        if self.blank == -1:
+            object.__setattr__(self, "blank", self.puzzle.index(0))
 
 
 TilePuzzleState._width = 4  # For now
