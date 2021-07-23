@@ -245,6 +245,25 @@ class TilePuzzle:
 
         return ret
 
+    def generate_instances(self, instances_path, suboptimal_solutions_path, num_instances, min_ops, max_ops, seed=123):
+        """The optimal number of operations to solve the generated instances may be smaller than the number
+        that was use for generating them."""
+        import random
+
+        random.seed(seed)
+        with open(instances_path, "w") as instances, open(suboptimal_solutions_path, "w") as suboptimal_solutions:
+            for instance_num in range(num_instances):
+                num_ops = random.randrange(min_ops, max_ops + 1)
+                puzzle = tuple(range(TilePuzzle._height * TilePuzzleState._width))  # Start from the solved state
+                blank = 0
+                ops = []
+                for i in range(num_ops):
+                    op = random.choice(self.applicable_operators[blank])
+                    puzzle, blank = self.apply_op(op, puzzle, blank)
+                    ops.append(op)
+                instances.write(f'{" ".join(str(p) for p in puzzle)}\n')
+                suboptimal_solutions.write(f'{",".join(reversed([op.name for op in ops]))}\n')
+
     @property  # Not a classmethod property because, sadly, pypy doesn't support classmethod properties yet
     # (at least not on dataclasses)
     def width(self):
