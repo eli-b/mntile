@@ -8,7 +8,7 @@ import sys
 class TilePuzzleState:
     """Represents the state of an MxN tile puzzle."""
 
-    puzzle: Tuple[int]  # An MxN-sized list
+    puzzle: Tuple[int, ...]  # An MxN-sized list
     blank: int = field(default=-1, hash=False, compare=False)
 
     @property  # Not a classmethod property because, sadly, pypy doesn't support classmethod properties yet
@@ -49,6 +49,8 @@ class SlideDirection(Enum):
 
 
 class TilePuzzle:
+    _h_increment: List[List[float]]
+
     def __init__(
         self,
         operator_order=(
@@ -189,11 +191,12 @@ class TilePuzzle:
                 return SlideDirection.up
             return SlideDirection.down
 
-    def apply_op(self, op: SlideDirection, puzzle: Tuple[int], blank: int) -> (Tuple[int], int):
+    def apply_op(self, op: SlideDirection, orig_puzzle: Tuple[int, ...], blank: int) -> Tuple[Tuple[int, ...], int]:
         #  We actually do the swap to maintain consistency when using abstract states
         #  (these contain -1 in some positions, including possibly the blank position.)
-        puzzle = list(puzzle)  # timeit showed copying and swapping is faster than constructing
-        # a tuple with slice unpacking and two swapped items
+        puzzle = list(orig_puzzle)  # timeit showed copying and swapping is faster than constructing
+        # a tuple with slice unpacking and two swapped items. Changing the variable name to help mypy
+        # cope with the type change.
         w = self.width
         h = self.height
         if op == SlideDirection.up:

@@ -46,6 +46,13 @@ class Timeout(Exception):
 
 
 class AStar:
+    expanded: int
+    generated: int
+    reopened: int
+    cost: float
+    cost_lower_bound: float
+    total_time: float
+
     def __init__(self, puzzle: TilePuzzle):
         self._tile_puzzle = puzzle
         self._reset_stats()
